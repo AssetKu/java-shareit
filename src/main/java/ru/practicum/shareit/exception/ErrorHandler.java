@@ -24,25 +24,20 @@ public class ErrorHandler {
 
     @ExceptionHandler(ValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> validation(ValidationException e) {return Map.of("error", e.getMessage());}
+    public Map<String, String> validation(ValidationException e) {
+        return Map.of("error", e.getMessage());
+    }
 
     @ExceptionHandler(ForbiddenException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public Map<String, String> handleForbidden(
-            ForbiddenException e) {
+    public Map<String, String> handleForbidden(ForbiddenException e) {
         return Map.of("error", e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleValidation(
-            MethodArgumentNotValidException e) {
+    public Map<String, String> handleValidation(MethodArgumentNotValidException e) {
 
-        return Map.of(
-                "error",
-                e.getBindingResult()
-                        .getFieldError()
-                        .getDefaultMessage()
-        );
+        return Map.of("error", e.getBindingResult().getFieldError().getDefaultMessage());
     }
 }

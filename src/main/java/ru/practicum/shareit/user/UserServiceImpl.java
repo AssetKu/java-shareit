@@ -18,32 +18,30 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto create(UserDto userDto) {
 
-        boolean emailExists = userRepository.findAll().stream()
-                .anyMatch(user ->
-                        user.getEmail().equalsIgnoreCase(userDto.getEmail()));
-
-        if (emailExists) {
-            throw new ConflictException("Email already exists");
+        if (userRepository.existsByEmail(userDto.getEmail())) {
+            throw new ConflictException("Email уже существует");
         }
 
         User user = UserMapper.toUser(userDto);
 
-        return UserMapper.toDto(userRepository.save(user));
+        return UserMapper.toDto(
+                userRepository.save(user)
+        );
     }
 
     @Override
     public UserDto getById(Long id) {
-        User user = userRepository.findById(id);
 
-        if (user == null) {
-            throw new NotFoundException("Пользователь не найден");
-        }
+        User user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new NotFoundException("Пользователь не найден"));
 
         return UserMapper.toDto(user);
     }
 
     @Override
     public Collection<UserDto> getAll() {
+
         return userRepository.findAll()
                 .stream()
                 .map(UserMapper::toDto)
@@ -51,33 +49,41 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto update(Long id, UserDto dto) {
+    public UserDto update(Long id, UserDto userDto) {
 
-        User user = userRepository.findById(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new NotFoundException("Пользователь не найден"));
 
-        if (dto.getEmail() != null) {
+        if (userDto.getEmail() != null
+                && !userDto.getEmail().equals(user.getEmail())
+                && userRepository.existsByEmail(userDto.getEmail())) {
 
-            boolean emailExists = userRepository.findAll().stream()
-                    .filter(u -> !u.getId().equals(id))
-                    .anyMatch(u ->
-                            u.getEmail().equalsIgnoreCase(dto.getEmail()));
-
-            if (emailExists) {
-                throw new ConflictException("Email already exists");
-            }
-
-            user.setEmail(dto.getEmail());
+            throw new ConflictException(
+                    "Email уже используется"
+            );
         }
 
-        if (dto.getName() != null) {
-            user.setName(dto.getName());
+        if (userDto.getName() != null) {
+            user.setName(userDto.getName());
         }
 
-        return UserMapper.toDto(userRepository.update(user));
+        if (userDto.getEmail() != null) {
+            user.setEmail(userDto.getEmail());
+        }
+
+        return UserMapper.toDto(
+                userRepository.save(user)
+        );
     }
 
     @Override
     public void delete(Long id) {
-        userRepository.delete(id);
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new NotFoundException("Пользователь не найден"));
+
+        userRepository.delete(user);
     }
 }

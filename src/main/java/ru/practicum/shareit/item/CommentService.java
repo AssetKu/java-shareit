@@ -8,7 +8,7 @@ public interface CommentService {
 
     CommentDto create(Long userId,
                       Long itemId,
-                      CommentDto dto);
+                      CommentDto commentDto);
 
     List<CommentDto> getByItemId(Long itemId);
 }

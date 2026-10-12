@@ -25,41 +25,41 @@ public class BookingServiceImpl implements BookingService {
     private final ItemRepository itemRepository;
 
     @Override
-    public BookingDto create(Long userId, BookingCreateDto dto) {
+    public BookingDto create(Long userId, BookingCreateDto bookingCreateDto) {
 
         User booker = userRepository.findById(userId)
                 .orElseThrow(() ->
                         new NotFoundException("Пользователь не найден"));
 
-        Item item = itemRepository.findById(dto.getItemId())
+        Item item = itemRepository.findById(bookingCreateDto.getItemId())
                 .orElseThrow(() ->
                         new NotFoundException("Вещь не найдена"));
 
         if (item.getOwner().getId().equals(userId)) {
-            throw new NotFoundException("Владелец не может бронировать свою вещь");
+            throw new ValidationException("Владелец не может бронировать свою вещь");
         }
 
         if (!item.getAvailable()) {
             throw new ValidationException("Вещь недоступна для бронирования");
         }
 
-        if (dto.getStart() == null || dto.getEnd() == null) {
+        if (bookingCreateDto.getStart() == null || bookingCreateDto.getEnd() == null) {
             throw new ValidationException("Дата начала и окончания обязательны");
         }
 
-        if (!dto.getStart().isBefore(dto.getEnd())) {
+        if (!bookingCreateDto.getStart().isBefore(bookingCreateDto.getEnd())) {
             throw new ValidationException(
                     "Дата начала должна быть раньше даты окончания");
         }
 
-        if (dto.getEnd().isBefore(LocalDateTime.now())) {
+        if (bookingCreateDto.getEnd().isBefore(LocalDateTime.now())) {
             throw new ValidationException(
                     "Дата окончания не может быть в прошлом");
         }
 
         Booking booking = Booking.builder()
-                .start(dto.getStart())
-                .end(dto.getEnd())
+                .start(bookingCreateDto.getStart())
+                .end(bookingCreateDto.getEnd())
                 .status(BookingStatus.WAITING)
                 .item(item)
                 .booker(booker)
@@ -129,57 +129,52 @@ public class BookingServiceImpl implements BookingService {
     public Collection<BookingDto> getBookings(Long userId,
                                               String state) {
 
+        userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new NotFoundException("Пользователь не найден"));
+
         LocalDateTime now = LocalDateTime.now();
+
+        BookingState bookingState = BookingState.from(state);
 
         List<Booking> bookings;
 
-        switch (state.toUpperCase()) {
+        switch (bookingState) {
 
-            case "CURRENT":
-                bookings =
-                        bookingRepository
-                                .findByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(
-                                        userId,
-                                        now,
-                                        now);
+            case CURRENT:
+                bookings = bookingRepository
+                        .findByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(
+                                userId, now, now);
                 break;
 
-            case "PAST":
-                bookings =
-                        bookingRepository
-                                .findByBookerIdAndEndBeforeOrderByStartDesc(
-                                        userId,
-                                        now);
+            case PAST:
+                bookings = bookingRepository
+                        .findByBookerIdAndEndBeforeOrderByStartDesc(
+                                userId, now);
                 break;
 
-            case "FUTURE":
-                bookings =
-                        bookingRepository
-                                .findByBookerIdAndStartAfterOrderByStartDesc(
-                                        userId,
-                                        now);
+            case FUTURE:
+                bookings = bookingRepository
+                        .findByBookerIdAndStartAfterOrderByStartDesc(
+                                userId, now);
                 break;
 
-            case "WAITING":
-                bookings =
-                        bookingRepository
-                                .findByBookerIdAndStatusOrderByStartDesc(
-                                        userId,
-                                        BookingStatus.WAITING);
+            case WAITING:
+                bookings = bookingRepository
+                        .findByBookerIdAndStatusOrderByStartDesc(
+                                userId, BookingStatus.WAITING);
                 break;
 
-            case "REJECTED":
-                bookings =
-                        bookingRepository
-                                .findByBookerIdAndStatusOrderByStartDesc(
-                                        userId,
-                                        BookingStatus.REJECTED);
+            case REJECTED:
+                bookings = bookingRepository
+                        .findByBookerIdAndStatusOrderByStartDesc(
+                                userId, BookingStatus.REJECTED);
                 break;
 
+            case ALL:
             default:
-                bookings =
-                        bookingRepository
-                                .findByBookerIdOrderByStartDesc(userId);
+                bookings = bookingRepository
+                        .findByBookerIdOrderByStartDesc(userId);
         }
 
         return bookings.stream()
@@ -197,11 +192,13 @@ public class BookingServiceImpl implements BookingService {
 
         LocalDateTime now = LocalDateTime.now();
 
+        BookingState bookingState = BookingState.from(state);
+
         List<Booking> bookings;
 
-        switch (state.toUpperCase()) {
+        switch (bookingState) {
 
-            case "CURRENT":
+            case CURRENT:
                 bookings =
                         bookingRepository
                                 .findByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(
@@ -210,7 +207,7 @@ public class BookingServiceImpl implements BookingService {
                                         now);
                 break;
 
-            case "PAST":
+            case PAST:
                 bookings =
                         bookingRepository
                                 .findByItemOwnerIdAndEndBeforeOrderByStartDesc(
@@ -218,7 +215,7 @@ public class BookingServiceImpl implements BookingService {
                                         now);
                 break;
 
-            case "FUTURE":
+            case FUTURE:
                 bookings =
                         bookingRepository
                                 .findByItemOwnerIdAndStartAfterOrderByStartDesc(
@@ -226,7 +223,7 @@ public class BookingServiceImpl implements BookingService {
                                         now);
                 break;
 
-            case "WAITING":
+            case WAITING:
                 bookings =
                         bookingRepository
                                 .findByItemOwnerIdAndStatusOrderByStartDesc(
@@ -234,7 +231,7 @@ public class BookingServiceImpl implements BookingService {
                                         BookingStatus.WAITING);
                 break;
 
-            case "REJECTED":
+            case REJECTED:
                 bookings =
                         bookingRepository
                                 .findByItemOwnerIdAndStatusOrderByStartDesc(
@@ -242,6 +239,7 @@ public class BookingServiceImpl implements BookingService {
                                         BookingStatus.REJECTED);
                 break;
 
+            case ALL:
             default:
                 bookings =
                         bookingRepository
@@ -252,4 +250,5 @@ public class BookingServiceImpl implements BookingService {
                 .map(BookingMapper::toDto)
                 .toList();
     }
+
 }

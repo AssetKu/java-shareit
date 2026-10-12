@@ -8,7 +8,7 @@ import java.util.Collection;
 public interface BookingService {
 
     BookingDto create(Long userId,
-                      BookingCreateDto dto);
+                      BookingCreateDto bookingCreateDto);
 
     BookingDto approve(Long userId,
                        Long bookingId,

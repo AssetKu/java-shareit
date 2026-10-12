@@ -26,7 +26,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDto create(Long userId,
                              Long itemId,
-                             CommentDto dto) {
+                             CommentDto commentDto) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
@@ -49,7 +49,7 @@ public class CommentServiceImpl implements CommentService {
         }
 
         Comment comment = Comment.builder()
-                .text(dto.getText())
+                .text(commentDto.getText())
                 .author(user)
                 .item(item)
                 .created(LocalDateTime.now())

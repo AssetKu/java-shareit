@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.ForbiddenException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
@@ -22,16 +23,16 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
 
     @Override
-    public ItemDto create(Long userId, ItemDto dto) {
+    public ItemDto create(Long userId, ItemDto itemDto) {
 
         User owner = userRepository.findById(userId)
                 .orElseThrow(() ->
                         new NotFoundException("Пользователь не найден"));
 
         Item item = Item.builder()
-                .name(dto.getName())
-                .description(dto.getDescription())
-                .available(dto.getAvailable())
+                .name(itemDto.getName())
+                .description(itemDto.getDescription())
+                .available(itemDto.getAvailable())
                 .owner(owner)
                 .build();
 
@@ -50,7 +51,7 @@ public class ItemServiceImpl implements ItemService {
                         new NotFoundException("Вещь не найдена"));
 
         if (!item.getOwner().getId().equals(userId)) {
-            throw new NotFoundException(
+            throw new ForbiddenException(
                     "Редактировать может только владелец"
             );
         }
@@ -79,16 +80,16 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() ->
                         new NotFoundException("Вещь не найдена"));
 
-        ItemDto dto = ItemMapper.toDto(item);
+        ItemDto itemDto = ItemMapper.toDto(item);
 
-        dto.setComments(
+        itemDto.setComments(
                 commentRepository.findByItemId(itemId)
                         .stream()
                         .map(CommentMapper::toDto)
                         .toList()
         );
 
-        return dto;
+        return itemDto;
     }
 
     @Override
@@ -98,16 +99,16 @@ public class ItemServiceImpl implements ItemService {
                 .stream()
                 .map(item -> {
 
-                    ItemDto dto = ItemMapper.toDto(item);
+                    ItemDto itemDto = ItemMapper.toDto(item);
 
-                    dto.setComments(
+                    itemDto.setComments(
                             commentRepository.findByItemId(item.getId())
                                     .stream()
                                     .map(CommentMapper::toDto)
                                     .toList()
                     );
 
-                    return dto;
+                    return itemDto;
                 })
                 .toList();
     }
@@ -119,7 +120,9 @@ public class ItemServiceImpl implements ItemService {
             return Collections.emptyList();
         }
 
-        return itemRepository.search(text)
+        String query = text.toLowerCase();
+
+        return itemRepository.search(query)
                 .stream()
                 .map(ItemMapper::toDto)
                 .toList();

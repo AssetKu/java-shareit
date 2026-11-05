@@ -5,6 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
+<<<<<<< HEAD
+=======
+import javax.validation.Valid;
+
+>>>>>>> 68e9c73 (Fix add item requests and gateway)
 @RestController
 @RequestMapping("/requests")
 @RequiredArgsConstructor
@@ -15,7 +20,11 @@ public class ItemRequestController {
     @PostMapping
     public ResponseEntity<Object> create(
             @RequestHeader("X-Sharer-User-Id") Long userId,
+<<<<<<< HEAD
             @RequestBody ItemRequestDto dto) {
+=======
+            @Valid @RequestBody ItemRequestDto dto) {
+>>>>>>> 68e9c73 (Fix add item requests and gateway)
 
         return requestClient.create(userId, dto);
     }

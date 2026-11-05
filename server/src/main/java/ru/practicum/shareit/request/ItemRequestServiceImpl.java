@@ -41,6 +41,12 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public Collection<ItemRequestDto> getOwnRequests(Long userId) {
 
+<<<<<<< HEAD
+=======
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+
+>>>>>>> 68e9c73 (Fix add item requests and gateway)
         return requestRepository
                 .findByRequestorIdOrderByCreatedDesc(userId)
                 .stream()
@@ -65,6 +71,12 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public Collection<ItemRequestDto> getAllRequests(Long userId) {
 
+<<<<<<< HEAD
+=======
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+
+>>>>>>> 68e9c73 (Fix add item requests and gateway)
         return requestRepository
                 .findByRequestorIdNotOrderByCreatedDesc(userId)
                 .stream()
@@ -90,6 +102,12 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public ItemRequestDto getById(Long userId,
                                   Long requestId) {
 
+<<<<<<< HEAD
+=======
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+
+>>>>>>> 68e9c73 (Fix add item requests and gateway)
         ItemRequest request = requestRepository.findById(requestId)
                 .orElseThrow(() ->
                         new NotFoundException("Запрос не найден"));

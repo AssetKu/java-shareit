@@ -4,6 +4,7 @@
          https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
+<<<<<<< HEAD
     <build>
         <plugins>
             <plugin>
@@ -17,6 +18,8 @@
         </plugins>
     </build>
 
+=======
+>>>>>>> 68e9c73 (Fix add item requests and gateway)
     <parent>
         <groupId>ru.practicum.shareit</groupId>
         <artifactId>java-shareit</artifactId>
@@ -78,12 +81,15 @@
             <version>2.7.18</version>
             <scope>test</scope>
         </dependency>
+<<<<<<< HEAD
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.38</version>
             <scope>compile</scope>
         </dependency>
+=======
+>>>>>>> 68e9c73 (Fix add item requests and gateway)
 
     </dependencies>
 

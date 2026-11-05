@@ -45,12 +45,15 @@
             <version>2.7.18</version>
             <scope>test</scope>
         </dependency>
+<<<<<<< HEAD
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.38</version>
             <scope>compile</scope>
         </dependency>
+=======
+>>>>>>> 68e9c73 (Fix add item requests and gateway)
 
     </dependencies>
 

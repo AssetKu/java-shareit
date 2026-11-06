@@ -1,25 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-<<<<<<< HEAD
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>16</source>
-                    <target>16</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
-=======
->>>>>>> 68e9c73 (Fix add item requests and gateway)
     <parent>
         <groupId>ru.practicum.shareit</groupId>
         <artifactId>java-shareit</artifactId>
@@ -36,7 +20,6 @@
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -68,6 +51,8 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.38</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -81,16 +66,5 @@
             <version>2.7.18</version>
             <scope>test</scope>
         </dependency>
-<<<<<<< HEAD
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.38</version>
-            <scope>compile</scope>
-        </dependency>
-=======
->>>>>>> 68e9c73 (Fix add item requests and gateway)
-
     </dependencies>
-
 </project>

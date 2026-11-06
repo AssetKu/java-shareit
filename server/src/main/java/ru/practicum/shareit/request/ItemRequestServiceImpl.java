@@ -20,12 +20,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRepository itemRepository;
 
     @Override
-    public ItemRequestDto create(Long userId,
-                                 ItemRequestDto dto) {
-
+    public ItemRequestDto create(Long userId, ItemRequestDto dto) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new NotFoundException("Пользователь не найден"));
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
         ItemRequest request = ItemRequest.builder()
                 .description(dto.getDescription())
@@ -33,36 +30,22 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .requestor(user)
                 .build();
 
-        return ItemRequestMapper.toDto(
-                requestRepository.save(request)
-        );
+        return ItemRequestMapper.toDto(requestRepository.save(request));
     }
 
     @Override
     public Collection<ItemRequestDto> getOwnRequests(Long userId) {
-
-<<<<<<< HEAD
-=======
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
->>>>>>> 68e9c73 (Fix add item requests and gateway)
-        return requestRepository
-                .findByRequestorIdOrderByCreatedDesc(userId)
+        return requestRepository.findByRequestorIdOrderByCreatedDesc(userId)
                 .stream()
                 .map(request -> {
-
-                    ItemRequestDto dto =
-                            ItemRequestMapper.toDto(request);
-
-                    dto.setItems(
-                            itemRepository.findByRequestId(
-                                            request.getId())
-                                    .stream()
-                                    .map(ItemRequestMapper::toItemResponseDto)
-                                    .toList()
-                    );
-
+                    ItemRequestDto dto = ItemRequestMapper.toDto(request);
+                    dto.setItems(itemRepository.findByRequestId(request.getId())
+                            .stream()
+                            .map(ItemRequestMapper::toItemResponseDto)
+                            .toList());
                     return dto;
                 })
                 .toList();
@@ -70,56 +53,35 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public Collection<ItemRequestDto> getAllRequests(Long userId) {
-
-<<<<<<< HEAD
-=======
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
->>>>>>> 68e9c73 (Fix add item requests and gateway)
-        return requestRepository
-                .findByRequestorIdNotOrderByCreatedDesc(userId)
+        return requestRepository.findByRequestorIdNotOrderByCreatedDesc(userId)
                 .stream()
                 .map(request -> {
-
-                    ItemRequestDto dto =
-                            ItemRequestMapper.toDto(request);
-
-                    dto.setItems(
-                            itemRepository.findByRequestId(
-                                            request.getId())
-                                    .stream()
-                                    .map(ItemRequestMapper::toItemResponseDto)
-                                    .toList()
-                    );
-
+                    ItemRequestDto dto = ItemRequestMapper.toDto(request);
+                    dto.setItems(itemRepository.findByRequestId(request.getId())
+                            .stream()
+                            .map(ItemRequestMapper::toItemResponseDto)
+                            .toList());
                     return dto;
                 })
                 .toList();
     }
 
     @Override
-    public ItemRequestDto getById(Long userId,
-                                  Long requestId) {
-
-<<<<<<< HEAD
-=======
+    public ItemRequestDto getById(Long userId, Long requestId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
->>>>>>> 68e9c73 (Fix add item requests and gateway)
         ItemRequest request = requestRepository.findById(requestId)
-                .orElseThrow(() ->
-                        new NotFoundException("Запрос не найден"));
+                .orElseThrow(() -> new NotFoundException("Запрос не найден"));
 
         ItemRequestDto dto = ItemRequestMapper.toDto(request);
-
-        dto.setItems(
-                itemRepository.findByRequestId(requestId)
-                        .stream()
-                        .map(ItemRequestMapper::toItemResponseDto)
-                        .toList()
-        );
+        dto.setItems(itemRepository.findByRequestId(requestId)
+                .stream()
+                .map(ItemRequestMapper::toItemResponseDto)
+                .toList());
 
         return dto;
     }
